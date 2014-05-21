@@ -1,5 +1,7 @@
 package perceptron_and;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Iulisloi Zacarias
@@ -10,6 +12,7 @@ public class Net {
     private final double alpha;
     private final InputLayer inputlayer;
     private boolean weightChange;
+    private ArrayList epochValues;
 
     private static final int MAX_EPOCHS = 200;
     private static final double ACT_LIMIAR = 0.2;
@@ -56,18 +59,19 @@ public class Net {
 
         return false;
     }
-
-    public int test(int[] inputs) {
-        int result;
-        //this.setInputs(input);
+    
+    public int run(int[] inputs){
+        double y_in;
         for (int i = 0; i < inputs.length; i++) {
             this.inputlayer.setInput(i, inputs[i]);
         }
+        y_in = bias + this.sumOfNeurons();
+        return this.activatcionFunc(y_in);
+    }
 
-        double y_in = bias + this.sumOfNeurons();
-        result = this.activatcionFunc(y_in);
+    public void test(int[] inputs) {
+        int result = this.run(inputs);
         this.imprimeTeste(inputs, result);
-        return result;
     }
 
     private double sumOfNeurons() {
