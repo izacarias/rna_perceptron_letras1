@@ -15,8 +15,8 @@ public class Net {
     private static final double ACT_LIMIAR = 0.2;
 
     public Net(int inputSize) {
-        this.bias = 0;  // set BIAS to "0"
-        this.alpha = 1; // set Alpha or Learning Rate to "1
+        this.bias = 1;  // set BIAS to "1"
+        this.alpha = 0.7; // set Alpha or Learning Rate to "0.7"
         /* cria uma camada de entrada do tamanho desejado */
         this.inputlayer = new InputLayer(inputSize);
     }
@@ -33,7 +33,7 @@ public class Net {
             for (Sample s : sampleSet.getSampleSet()) {
                 this.inputlayer.setInput(0, s.getValue(0));
                 this.inputlayer.setInput(1, s.getValue(1));
-                
+
                 int t = (int) s.getDesiredOutput();
 
                 y_in = bias + this.sumOfNeurons();
@@ -57,7 +57,7 @@ public class Net {
         return false;
     }
 
-    public int test(double[] inputs) {
+    public int test(int[] inputs) {
         int result;
         //this.setInputs(input);
         for (int i = 0; i < inputs.length; i++) {
@@ -89,9 +89,9 @@ public class Net {
         return 0;
     }
 
-    private void imprimeTeste(double[] inputs, int resultado) {
+    private void imprimeTeste(int[] inputs, int resultado) {
         for (int i = 0; i < inputs.length; i++) {
-            System.out.printf("%2.0f", inputs[i]);
+            System.out.printf("%2d", inputs[i]);
             System.out.print(" | ");
         }
         System.out.printf("%2d", resultado);

@@ -6,27 +6,27 @@ package perceptron_and;
  */
 public class Sample {
     
-    private double[] inputs;
-    private double desiredOutput;
+    private final int[] inputs;
+    private int desiredOutput;
 
-    public Sample(double[] inputs, double desiredOutput) {
+    public Sample(int[] inputs, int desiredOutput) {
         this.inputs = inputs;
         this.desiredOutput = desiredOutput;
     }
     
-    public double setValue(int index, double value){
-        return this.inputs[index] = value;
+    public void setValue(int index, int value){
+        this.inputs[index] = value;
     }
 
-    public double getValue(int index) {
+    public int getValue(int index) {
         return this.inputs[index];
     }
     
-    public void setDesiredOutput(double desiredOutput) {
+    public void setDesiredOutput(int desiredOutput) {
         this.desiredOutput = desiredOutput;
     }
 
-    public double getDesiredOutput() {
+    public int getDesiredOutput() {
         return desiredOutput;
     }
 }

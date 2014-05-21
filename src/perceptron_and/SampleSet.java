@@ -11,12 +11,17 @@ public class SampleSet {
     private ArrayList<Sample> sampleSet;
 
     public SampleSet() {
-        this.sampleSet = new ArrayList<Sample>();
+        this.sampleSet = new ArrayList<>();
     }
 
-    public void addSample(double[] inputs, double desiredOutput) {
+    public void addSample(int[] inputs, int desiredOutput) {
         Sample s = new Sample(inputs, desiredOutput);
         this.sampleSet.add(s);
+    }
+    
+    public void addSample(int input1, int input2, int desiredOutput){
+        int[] inputs = {input1, input2};
+        this.addSample(inputs, desiredOutput);
     }
 
     public ArrayList<Sample> getSampleSet() {
