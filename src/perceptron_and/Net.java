@@ -1,7 +1,5 @@
 package perceptron_and;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Iulisloi Zacarias
