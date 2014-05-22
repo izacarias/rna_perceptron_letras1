@@ -12,7 +12,6 @@ public class Net {
     private final double alpha;
     private final InputLayer inputlayer;
     private boolean weightChange;
-    private ArrayList epochValues;
 
     private static final int MAX_EPOCHS = 200;
     private static final double ACT_LIMIAR = 0.2;
@@ -28,7 +27,7 @@ public class Net {
         int epoch = 0;
         double y_in;
         int y;
-
+        
         do {
             // indica se houve alteração de pesos
             this.weightChange = false;
