@@ -1,4 +1,4 @@
-package perceptron_and;
+package perceptron_letras;
 
 /**
  * Classe com amostras para o treinamento

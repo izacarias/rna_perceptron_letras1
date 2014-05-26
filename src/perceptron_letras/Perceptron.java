@@ -1,10 +1,10 @@
-package perceptron_and;
+package perceptron_letras;
 
 /**
  *
  * @author Iulisloi Zacarias
  */
-public class Net {
+public class Perceptron {
 
     private double bias;
     private final double alpha;
@@ -14,7 +14,7 @@ public class Net {
     private static final int MAX_EPOCHS = 20000;
     private static final double ACT_LIMIAR = 0.2;
 
-    public Net(int inputSize) {
+    public Perceptron(int inputSize) {
         this.bias = 1;  // set BIAS to "1"
         this.alpha = 0.7; // set Alpha or Learning Rate to "0.7"
         /* cria uma camada de entrada do tamanho desejado */
