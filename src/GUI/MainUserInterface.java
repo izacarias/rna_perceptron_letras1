@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import perceptron_letras.Ocr;
 
 /**
@@ -19,8 +20,9 @@ public class MainUserInterface extends javax.swing.JFrame {
 
     private static String DIR_BASE
             = "/home/iulisloi/NetBeansProjects/rna_perceptron_letras1/src";
-    private static String DIR_TRAIN = DIR_BASE + "/Treinamento";
-    private static String DIR_TEST = DIR_BASE + "/Teste";
+    private String DIR_TRAIN = DIR_BASE + "/Treinamento";
+    private String DIR_TEST = DIR_BASE + "/Teste";
+    private boolean baseTreinada;
 
     Ocr ocrEngine;
 
@@ -32,8 +34,14 @@ public class MainUserInterface extends javax.swing.JFrame {
 
         this.setResizable(false);
         this.setLocationRelativeTo(null);
+
+        /* Seleciona os diretórios da aplicação */
+        this.selectImageDirectories();
+
         this.listFilesToRecognize();
         ocrEngine = new Ocr(26, 900); // 26 letras com 900 pixels cada
+        this.baseTreinada = false;
+        this.jBtnReconhecer.setEnabled(this.baseTreinada);
     }
 
     /**
@@ -49,16 +57,18 @@ public class MainUserInterface extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jBtnTreinar = new javax.swing.JButton();
         jProgressBarTreinar = new javax.swing.JProgressBar();
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jPanel4 = new javax.swing.JPanel();
         jCbSelecionarLetra = new javax.swing.JComboBox();
         jLblImagemLetra = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        jBtnReconhecer = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLblRecognizedChar = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("OCR Simples");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Treinamento"));
 
@@ -69,12 +79,23 @@ public class MainUserInterface extends javax.swing.JFrame {
             }
         });
 
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("OBS: Antes de tentar reconhecer um caractere clique no botão \"Treinar\" acima.");
+        jTextArea1.setWrapStyleWord(true);
+        jTextArea1.setSelectionEnd(0);
+        jTextArea1.setSelectionStart(0);
+        jScrollPane1.setViewportView(jTextArea1);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jBtnTreinar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jProgressBarTreinar, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jBtnTreinar, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+            .addComponent(jProgressBarTreinar, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         jPanel3Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jBtnTreinar, jProgressBarTreinar});
@@ -85,7 +106,9 @@ public class MainUserInterface extends javax.swing.JFrame {
                 .addComponent(jBtnTreinar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBarTreinar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(31, 31, 31)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Reconhecimento"));
@@ -105,10 +128,10 @@ public class MainUserInterface extends javax.swing.JFrame {
         jLblImagemLetra.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLblImagemLetra.setOpaque(true);
 
-        jButton1.setText("Reconhecer");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jBtnReconhecer.setText("Reconhecer");
+        jBtnReconhecer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jBtnReconhecerActionPerformed(evt);
             }
         });
 
@@ -125,7 +148,7 @@ public class MainUserInterface extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jBtnReconhecer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCbSelecionarLetra, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -141,7 +164,7 @@ public class MainUserInterface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLblImagemLetra, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(jBtnReconhecer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -157,19 +180,16 @@ public class MainUserInterface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(filler1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Arial Black", 0, 24)); // NOI18N
@@ -181,10 +201,7 @@ public class MainUserInterface extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,7 +209,8 @@ public class MainUserInterface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -215,16 +233,18 @@ public class MainUserInterface extends javax.swing.JFrame {
     private void jBtnTreinarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnTreinarActionPerformed
         try {
             ocrEngine.generateSampleData(DIR_TRAIN, jProgressBarTreinar);
+            this.baseTreinada = true;
+            this.jBtnReconhecer.setEnabled(baseTreinada);
         } catch (IOException ex) {
             Logger.getLogger(MainUserInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jBtnTreinarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jBtnReconhecerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnReconhecerActionPerformed
         String recognizedChar = this.recognizeCharacter(
                 jCbSelecionarLetra.getSelectedItem().toString());
         jLblRecognizedChar.setText(recognizedChar);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jBtnReconhecerActionPerformed
 
     /**
      * @param args the command line arguments
@@ -293,23 +313,22 @@ public class MainUserInterface extends javax.swing.JFrame {
         return ocrEngine.recognizeCharacter(bitMapLetra);
     }
 
-//    private String selectDirectory(String dialogTitle) {
-//        JFileChooser chooser = new JFileChooser();
-//        chooser.setCurrentDirectory(new java.io.File("."));
-//        chooser.setDialogTitle(dialogTitle);
-//        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//        chooser.setAcceptAllFileFilterUsed(false);
-//        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-//            return chooser.getCurrentDirectory().getPath();
-//        } else {
-//            return "";
-//        }
-//    }
+    private String selectDirectory(String dialogTitle) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle(dialogTitle);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile().getAbsolutePath();
+        } else {
+            return "";
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.Box.Filler filler1;
+    private javax.swing.JButton jBtnReconhecer;
     private javax.swing.JButton jBtnTreinar;
-    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jCbSelecionarLetra;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -319,5 +338,19 @@ public class MainUserInterface extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JProgressBar jProgressBarTreinar;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
+
+    private void selectImageDirectories() {
+        JOptionPane.showMessageDialog(this, 
+                "Selecione o diretório que contém as imagens de TREINAMENTO.");
+        this.DIR_TRAIN = selectDirectory(
+                "Diretório com imagens de treinamento");
+        
+        JOptionPane.showMessageDialog(this, 
+                "Selecione o diretório que contém as imagens de TESTE.");
+        this.DIR_TEST = selectDirectory(
+                "Diretório com imagens de teste");
+    }
 }
