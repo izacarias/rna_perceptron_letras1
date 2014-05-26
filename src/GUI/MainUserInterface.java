@@ -315,7 +315,7 @@ public class MainUserInterface extends javax.swing.JFrame {
 
     private String selectDirectory(String dialogTitle) {
         JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setCurrentDirectory(new java.io.File("./src"));
         chooser.setDialogTitle(dialogTitle);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
@@ -343,14 +343,29 @@ public class MainUserInterface extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void selectImageDirectories() {
-        JOptionPane.showMessageDialog(this, 
+        JOptionPane.showMessageDialog(this,
                 "Selecione o diretório que contém as imagens de TREINAMENTO.");
-        this.DIR_TRAIN = selectDirectory(
-                "Diretório com imagens de treinamento");
-        
-        JOptionPane.showMessageDialog(this, 
+        do {
+            this.DIR_TRAIN = selectDirectory(
+                    "Diretório com imagens de treinamento");
+
+            if ((this.DIR_TEST.isEmpty()) || (this.DIR_TRAIN.isEmpty())) {
+                JOptionPane.showMessageDialog(this,
+                        "Você não selecionou o diretório com imagens de treinamento. \n"
+                        + "Não é possível continuar sem selecioná-lo!");
+            }
+        } while (this.DIR_TRAIN.isEmpty());
+
+        JOptionPane.showMessageDialog(this,
                 "Selecione o diretório que contém as imagens de TESTE.");
-        this.DIR_TEST = selectDirectory(
-                "Diretório com imagens de teste");
+        do {
+            this.DIR_TEST = selectDirectory(
+                    "Diretório com imagens de teste");
+            if ((this.DIR_TEST.isEmpty()) || (this.DIR_TRAIN.isEmpty())) {
+                JOptionPane.showMessageDialog(this,
+                        "Você não selecionou o diretório com imagens de testes. \n"
+                        + "Não é possível continuar sem selecioná-lo!");
+            }
+        } while (this.DIR_TRAIN.isEmpty());
     }
 }
