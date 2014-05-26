@@ -21,7 +21,7 @@ public class MainUserInterface extends javax.swing.JFrame {
             = "/home/iulisloi/NetBeansProjects/rna_perceptron_letras1/src";
     private static String DIR_TRAIN = DIR_BASE + "/Treinamento";
     private static String DIR_TEST = DIR_BASE + "/Teste";
-    
+
     Ocr ocrEngine;
 
     /**
@@ -55,7 +55,7 @@ public class MainUserInterface extends javax.swing.JFrame {
         jLblImagemLetra = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jLblRecognizedChar = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -101,20 +101,25 @@ public class MainUserInterface extends javax.swing.JFrame {
             }
         });
 
-        jLblImagemLetra.setBackground(java.awt.Color.lightGray);
+        jLblImagemLetra.setBackground(java.awt.Color.white);
         jLblImagemLetra.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLblImagemLetra.setOpaque(true);
 
         jButton1.setText("Reconhecer");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Caractere reconhecido:");
 
-        jLabel3.setBackground(java.awt.Color.lightGray);
-        jLabel3.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
-        jLabel3.setForeground(java.awt.Color.red);
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setOpaque(true);
+        jLblRecognizedChar.setBackground(java.awt.Color.lightGray);
+        jLblRecognizedChar.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        jLblRecognizedChar.setForeground(java.awt.Color.red);
+        jLblRecognizedChar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLblRecognizedChar.setOpaque(true);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -127,7 +132,7 @@ public class MainUserInterface extends javax.swing.JFrame {
                     .addComponent(jLblImagemLetra, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLblRecognizedChar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,7 +145,7 @@ public class MainUserInterface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLblRecognizedChar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -208,9 +213,18 @@ public class MainUserInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_jCbSelecionarLetraItemStateChanged
 
     private void jBtnTreinarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnTreinarActionPerformed
-        
-        // ocrEngine.generateSampleData();
+        try {
+            ocrEngine.generateSampleData(DIR_TRAIN, jProgressBarTreinar);
+        } catch (IOException ex) {
+            Logger.getLogger(MainUserInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jBtnTreinarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String recognizedChar = this.recognizeCharacter(
+                jCbSelecionarLetra.getSelectedItem().toString());
+        jLblRecognizedChar.setText(recognizedChar);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,22 +273,38 @@ public class MainUserInterface extends javax.swing.JFrame {
         }
     }
 
-    private String selectDirectory(String dialogTitle) {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle(dialogTitle);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            return chooser.getCurrentDirectory().getPath();
-        } else {
-            return "";
+    private String recognizeCharacter(String fileName) {
+        int[] bitMapLetra = new int[900];
+        String recognizedChar;
+        File imageFile = new File(DIR_TEST, fileName);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(imageFile);
+            int counter = 0;
+            for (int j = 0; j < image.getHeight(); j++) {
+                for (int k = 0; k < image.getWidth(); k++) {
+                    bitMapLetra[counter] = (image.getRGB(k, j) < -8388608) ? 1 : -1;
+                    counter++;
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainUserInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return ocrEngine.recognizeCharacter(bitMapLetra);
     }
 
-    private void drawCharacterToRecognize() {
-
-    }
+//    private String selectDirectory(String dialogTitle) {
+//        JFileChooser chooser = new JFileChooser();
+//        chooser.setCurrentDirectory(new java.io.File("."));
+//        chooser.setDialogTitle(dialogTitle);
+//        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//        chooser.setAcceptAllFileFilterUsed(false);
+//        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+//            return chooser.getCurrentDirectory().getPath();
+//        } else {
+//            return "";
+//        }
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.Box.Filler filler1;
@@ -283,8 +313,8 @@ public class MainUserInterface extends javax.swing.JFrame {
     private javax.swing.JComboBox jCbSelecionarLetra;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLblImagemLetra;
+    private javax.swing.JLabel jLblRecognizedChar;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
