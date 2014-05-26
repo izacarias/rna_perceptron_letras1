@@ -11,7 +11,7 @@ public class Net {
     private final InputLayer inputlayer;
     private boolean weightChange;
 
-    private static final int MAX_EPOCHS = 200;
+    private static final int MAX_EPOCHS = 20000;
     private static final double ACT_LIMIAR = 0.2;
 
     public Net(int inputSize) {
@@ -31,13 +31,16 @@ public class Net {
             this.weightChange = false;
 
             for (Sample s : sampleSet.getSampleSet()) {
-                this.inputlayer.setInput(0, s.getValue(0));
-                this.inputlayer.setInput(1, s.getValue(1));
+//                this.inputlayer.setInput(0, s.getValue(0));
+//                this.inputlayer.setInput(1, s.getValue(1));
+                for (int indexS = 0; indexS < s.getInputsLenght(); indexS++) {
+                    this.inputlayer.setInput(indexS, s.getValue(indexS));
+                }
 
                 int t = (int) s.getDesiredOutput();
 
                 y_in = bias + this.sumOfNeurons();
-                y = this.activatcionFunc(y_in);
+                y = this.activactionFunc(y_in);
                 if (y != t) {
                     for (int i = 0; i < this.inputlayer.getSize(); i++) {
                         this.inputlayer.setWeight(i,
@@ -63,7 +66,7 @@ public class Net {
             this.inputlayer.setInput(i, inputs[i]);
         }
         y_in = bias + this.sumOfNeurons();
-        return this.activatcionFunc(y_in);
+        return this.activactionFunc(y_in);
     }
 
     public void test(int[] inputs) {
@@ -79,7 +82,7 @@ public class Net {
         return sum;
     }
 
-    private int activatcionFunc(double value) {
+    private int activactionFunc(double value) {
         if (value > ACT_LIMIAR) {
             return 1;
         } else if ((value >= (ACT_LIMIAR * -1)) && (value <= ACT_LIMIAR)) {
@@ -95,6 +98,7 @@ public class Net {
             System.out.printf("%2d", inputs[i]);
             System.out.print(" | ");
         }
+        System.out.print(" Result: ");
         System.out.printf("%2d", resultado);
         System.out.println();
     }

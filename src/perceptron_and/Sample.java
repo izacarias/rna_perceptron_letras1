@@ -29,4 +29,8 @@ public class Sample {
     public int getDesiredOutput() {
         return desiredOutput;
     }
+    
+    public int getInputsLenght(){
+        return this.inputs.length;
+    }
 }
