@@ -69,20 +69,16 @@ public class Ocr {
         for (int ssIndex = 0; ssIndex < ssData.length; ssIndex++) {
             this.perceptronLetras.get(ssIndex).train(ssData[ssIndex]);
         }
-
-        //this.perceptronLetras.get(0).train(ssDataA);
-        //this.perceptronLetras.get(0).test(DATA_A1);
-        //this.perceptronLetras.get(0).test(DATA_A2);
-        //this.perceptronLetras.get(0).test(DATA_A3);
-        //this.perceptronLetras.get(0).test(DATA_B1);
-        //this.perceptronLetras.get(0).test(DATA_B2);
-        //this.perceptronLetras.get(0).test(DATA_C1);
-        //this.perceptronLetras.get(0).test(DATA_C2);
-        //this.perceptronLetras.get(0).test(DATA_C3);
+    }
+    
+    public void openSampleData(){
+        
     }
     
     public String recognizeCharacter(int[] input){
-        String[] letras = {"A", "B", "C"};
+        String[] letras = {"A", "B", "C", "D", "E", "F", "G", "H", 
+            "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", 
+            "T", "U", "V", "W", "X", "Y", "Z"};
         for (int i = 0; i < this.perceptronLetras.size(); i++) {
             if (this.perceptronLetras.get(i).run(input) == 1) {
                 return letras[i];
